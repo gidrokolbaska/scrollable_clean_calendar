@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-
-import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
-import 'package:scrollable_clean_calendar/utils/enums.dart';
-import 'package:scrollable_clean_calendar/utils/extensions.dart';
+import 'package:mc_scrollable_calendar/controllers/mc_calendar_controller.dart';
+import 'package:mc_scrollable_calendar/utils/extensions.dart';
 
 class WeekdaysWidget extends StatelessWidget {
   final bool showWeekdays;
-  final CleanCalendarController cleanCalendarController;
+  final MCCalendarController cleanCalendarController;
   final String locale;
-  final Layout? layout;
-  final TextStyle? textStyle;
-  final Widget Function(BuildContext context, String weekday)? weekdayBuilder;
+
+  final Widget Function(BuildContext context, String weekday, int index)?
+      weekdayBuilder;
   final double? aspectRatio;
 
   const WeekdaysWidget({
@@ -18,9 +16,7 @@ class WeekdaysWidget extends StatelessWidget {
     required this.showWeekdays,
     required this.cleanCalendarController,
     required this.locale,
-    required this.layout,
     required this.weekdayBuilder,
-    required this.textStyle,
     required this.aspectRatio,
   }) : super(key: key);
 
@@ -31,54 +27,30 @@ class WeekdaysWidget extends StatelessWidget {
     return GridView.count(
       crossAxisCount: DateTime.daysPerWeek,
       shrinkWrap: true,
-      childAspectRatio: aspectRatio ?? 1.0,
+      childAspectRatio: aspectRatio ?? 1.2,
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
       children: List.generate(DateTime.daysPerWeek, (index) {
         final weekDay = cleanCalendarController.getDaysOfWeek(locale)[index];
 
         if (weekdayBuilder != null) {
-          return weekdayBuilder!(context, weekDay);
+          return weekdayBuilder!(context, weekDay, index);
         }
 
-        return <Layout, Widget Function()>{
-          Layout.DEFAULT: () => _pattern(context, weekDay),
-          Layout.BEAUTY: () => _beauty(context, weekDay)
-        }[layout]!();
+        return _beauty(context, weekDay, index);
       }),
     );
   }
 
-  Widget _pattern(BuildContext context, String weekday) {
+  Widget _beauty(BuildContext context, String weekday, int index) {
     return Center(
       child: Text(
         weekday.capitalize(),
-        style: textStyle ??
-            Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .color!
-                      .withOpacity(.4),
-                  fontWeight: FontWeight.bold,
-                ),
-      ),
-    );
-  }
-
-  Widget _beauty(BuildContext context, String weekday) {
-    return Center(
-      child: Text(
-        weekday.capitalize(),
-        style: textStyle ??
-            Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .color!
-                      .withOpacity(.4),
-                  fontWeight: FontWeight.bold,
-                ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color:
+                  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.4),
+              fontWeight: FontWeight.bold,
+            ),
       ),
     );
   }

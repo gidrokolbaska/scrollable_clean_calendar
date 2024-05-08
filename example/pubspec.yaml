@@ -23,13 +23,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  scrollable_clean_calendar:
+  mc_scrollable_calendar:
     path: ../
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
-
+  # sliding_sheet2:
+  #   git: https://github.com/gidrokolbaska/sliding_sheet2.git
+  intl:
 dev_dependencies:
   flutter_test:
     sdk: flutter

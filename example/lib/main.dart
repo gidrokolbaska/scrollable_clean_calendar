@@ -1,72 +1,106 @@
 import 'package:flutter/material.dart';
-import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
-import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
-import 'package:scrollable_clean_calendar/utils/enums.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:mc_scrollable_calendar/controllers/mc_calendar_controller.dart';
+import 'package:mc_scrollable_calendar/mc_scrollable_calendar.dart';
 
 void main() {
-  runApp(MyApp());
+  initializeDateFormatting();
+  runApp(MaterialApp(home: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  final calendarController = CleanCalendarController(
-    minDate: DateTime.now(),
-    maxDate: DateTime.now().add(const Duration(days: 365)),
-    onRangeSelected: (firstDate, secondDate) {},
-    onDayTapped: (date) {},
-    // readOnly: true,
-    onPreviousMinDateTapped: (date) {},
-    onAfterMaxDateTapped: (date) {},
-    weekdayStart: DateTime.monday,
-    // initialFocusDate: DateTime(2023, 5),
-    // initialDateSelected: DateTime(2022, 3, 15),
-    // endDateSelected: DateTime(2022, 3, 20),
-  );
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  DateTime? selectedDate;
+  late final MCCalendarController calendarController;
+  @override
+  void initState() {
+    calendarController = MCCalendarController(
+      minDate: DateTime.now(),
+      maxDate: DateTime.now().add(const Duration(days: 90)),
+      onDayTapped: (date) {
+        selectedDate = date;
+      },
+      // readOnly: true,
+      weekdayStart: DateTime.monday,
+      initialFocusDate: DateTime.now(),
+      initialDateSelected: DateTime.now(),
+      // endDateSelected: DateTime(2022, 3, 20),
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Scrollable Clean Calendar',
-      theme: ThemeData(
-        colorScheme: const ColorScheme(
-          primary: Color(0xFF3F51B5),
-          primaryContainer: Color(0xFF002984),
-          secondary: Color(0xFFD32F2F),
-          secondaryContainer: Color(0xFF9A0007),
-          surface: Color(0xFFDEE2E6),
-          background: Color(0xFFF8F9FA),
-          error: Color(0xFF96031A),
-          onPrimary: Colors.white,
-          onSecondary: Colors.white,
-          onSurface: Colors.black,
-          onBackground: Colors.black,
-          onError: Colors.white,
-          brightness: Brightness.light,
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scrollable Clean Calendar'),
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       calendarController.clearSelectedDates();
+        //     },
+        //     icon: const Icon(Icons.clear),
+        //   )
+        // ],
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Scrollable Clean Calendar'),
-          actions: [
-            IconButton(
-              onPressed: () {
-                calendarController.clearSelectedDates();
+      body: TestButton(
+          calendarController: calendarController, selectedDate: selectedDate),
+    );
+  }
+}
+
+class TestButton extends StatelessWidget {
+  const TestButton({
+    Key? key,
+    required this.calendarController,
+    required this.selectedDate,
+  }) : super(key: key);
+
+  final MCCalendarController calendarController;
+  final DateTime? selectedDate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 150,
+          height: 150,
+          color: Colors.red,
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            await MCScrollableCalendar.showMCCleanCalendar(
+              context,
+              horizontalPadding: 11.5,
+              calendarController: calendarController,
+              headerStyle:
+                  (Color workingDaysColor, Color weekendDaysColor, int index) {
+                return TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: index <= 4 ? workingDaysColor : weekendDaysColor,
+                );
               },
-              icon: const Icon(Icons.clear),
-            )
-          ],
+              bottomWidget: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Выбрать дату')),
+            );
+            if (selectedDate == null) {
+              print('initial date: ${calendarController.initialDateSelected}');
+            } else {
+              print('hello:$selectedDate');
+            }
+          },
+          child: Text('Открыть календарь'),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   child: const Icon(Icons.arrow_downward),
-        //   onPressed: () {
-        //     calendarController.jumpToMonth(date: DateTime(2022, 8));
-        //   },
-        // ),
-        body: ScrollableCleanCalendar(
-          calendarController: calendarController,
-          layout: Layout.BEAUTY,
-          calendarCrossAxisSpacing: 0,
-        ),
-      ),
+      ],
     );
   }
 }

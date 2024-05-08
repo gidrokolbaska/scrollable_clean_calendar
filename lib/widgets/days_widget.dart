@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
-import 'package:scrollable_clean_calendar/models/day_values_model.dart';
-import 'package:scrollable_clean_calendar/utils/enums.dart';
-import 'package:scrollable_clean_calendar/utils/extensions.dart';
+import 'package:mc_scrollable_calendar/controllers/mc_calendar_controller.dart';
+import 'package:mc_scrollable_calendar/models/day_values_model.dart';
+import 'package:mc_scrollable_calendar/utils/extensions.dart';
 
 class DaysWidget extends StatelessWidget {
-  final CleanCalendarController cleanCalendarController;
+  final MCCalendarController cleanCalendarController;
   final DateTime month;
   final double calendarCrossAxisSpacing;
   final double calendarMainAxisSpacing;
-  final Layout? layout;
   final Widget Function(
     BuildContext context,
     DayValues values,
   )? dayBuilder;
   final Color? selectedBackgroundColor;
-  final Color? backgroundColor;
   final Color? selectedBackgroundColorBetween;
   final Color? disableBackgroundColor;
   final Color? dayDisableColor;
+
+  final Color workingDaysColor;
+  final Color monthContainerBackgroundColor;
+  final Color currentDayColor;
+  final Color weekendDaysColor;
   final double radius;
   final TextStyle? textStyle;
   final double? aspectRatio;
@@ -29,14 +31,16 @@ class DaysWidget extends StatelessWidget {
     required this.cleanCalendarController,
     required this.calendarCrossAxisSpacing,
     required this.calendarMainAxisSpacing,
-    required this.layout,
     required this.dayBuilder,
+    required this.workingDaysColor,
+    required this.weekendDaysColor,
     required this.selectedBackgroundColor,
-    required this.backgroundColor,
     required this.selectedBackgroundColorBetween,
     required this.disableBackgroundColor,
     required this.dayDisableColor,
     required this.radius,
+    required this.monthContainerBackgroundColor,
+    required this.currentDayColor,
     required this.textStyle,
     required this.aspectRatio,
   }) : super(key: key);
@@ -95,7 +99,7 @@ class DaysWidget extends StatelessWidget {
 
         final dayValues = DayValues(
           day: day,
-          isFirstDayOfWeek: day.weekday == cleanCalendarController.weekdayStart,
+          isFirstDayOfWeek: day.weekday == 6,
           isLastDayOfWeek: day.weekday == cleanCalendarController.weekdayEnd,
           isSelected: isSelected,
           maxDate: cleanCalendarController.maxDate,
@@ -108,10 +112,12 @@ class DaysWidget extends StatelessWidget {
         if (dayBuilder != null) {
           widget = dayBuilder!(context, dayValues);
         } else {
-          widget = <Layout, Widget Function()>{
-            Layout.DEFAULT: () => _pattern(context, dayValues),
-            Layout.BEAUTY: () => _beauty(context, dayValues),
-          }[layout]!();
+          widget = _beauty(
+            context,
+            dayValues,
+            monthContainerBackgroundColor,
+            currentDayColor,
+          );
         }
 
         return GestureDetector(
@@ -137,96 +143,15 @@ class DaysWidget extends StatelessWidget {
     );
   }
 
-  Widget _pattern(BuildContext context, DayValues values) {
-    Color bgColor = backgroundColor ?? Theme.of(context).colorScheme.surface;
+  Widget _beauty(BuildContext context, DayValues values,
+      Color monthContainerBackgroundColor, Color currentDayColor) {
+    BorderRadiusGeometry? borderRadius = BorderRadius.circular(radius);
+    Color bgColor = monthContainerBackgroundColor;
     TextStyle txtStyle =
         (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
-      color: backgroundColor != null
-          ? backgroundColor!.computeLuminance() > .5
-              ? Colors.black
-              : Colors.white
-          : Theme.of(context).colorScheme.onSurface,
-    );
-
-    if (values.isSelected) {
-      if ((values.selectedMinDate != null &&
-              values.day.isSameDay(values.selectedMinDate!)) ||
-          (values.selectedMaxDate != null &&
-              values.day.isSameDay(values.selectedMaxDate!))) {
-        bgColor =
-            selectedBackgroundColor ?? Theme.of(context).colorScheme.primary;
-        txtStyle =
-            (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
-          color: selectedBackgroundColor != null
-              ? selectedBackgroundColor!.computeLuminance() > .5
-                  ? Colors.black
-                  : Colors.white
-              : Theme.of(context).colorScheme.onPrimary,
-        );
-      } else {
-        bgColor = selectedBackgroundColorBetween ??
-            Theme.of(context).colorScheme.primary.withOpacity(.3);
-        txtStyle =
-            (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
-          color: selectedBackgroundColor != null &&
-                  selectedBackgroundColor == selectedBackgroundColorBetween
-              ? selectedBackgroundColor!.computeLuminance() > .5
-                  ? Colors.black
-                  : Colors.white
-              : selectedBackgroundColor ??
-                  Theme.of(context).colorScheme.primary,
-        );
-      }
-    } else if (values.day.isSameDay(values.minDate)) {
-      bgColor = Colors.transparent;
-      txtStyle = (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
-        color: selectedBackgroundColor ?? Theme.of(context).colorScheme.primary,
-      );
-    } else if (values.day.isBefore(values.minDate) ||
-        values.day.isAfter(values.maxDate)) {
-      bgColor = disableBackgroundColor ??
-          Theme.of(context).colorScheme.surface.withOpacity(.4);
-      txtStyle = (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
-        color: dayDisableColor ??
-            Theme.of(context).colorScheme.onSurface.withOpacity(.5),
-        decoration: TextDecoration.lineThrough,
-      );
-    }
-
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(radius),
-        border: values.day.isSameDay(values.minDate)
-            ? Border.all(
-                color: selectedBackgroundColor ??
-                    Theme.of(context).colorScheme.primary,
-                width: 2,
-              )
-            : null,
-      ),
-      child: Text(
-        values.text,
-        textAlign: TextAlign.center,
-        style: txtStyle,
-      ),
-    );
-  }
-
-  Widget _beauty(BuildContext context, DayValues values) {
-    BorderRadiusGeometry? borderRadius;
-    Color bgColor = Colors.transparent;
-    TextStyle txtStyle =
-        (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
-      color: backgroundColor != null
-          ? backgroundColor!.computeLuminance() > .5
-              ? Colors.black
-              : Colors.white
-          : Theme.of(context).colorScheme.onSurface,
-      fontWeight: values.isFirstDayOfWeek || values.isLastDayOfWeek
-          ? FontWeight.bold
-          : null,
+      color: values.isFirstDayOfWeek || values.isLastDayOfWeek
+          ? weekendDaysColor
+          : workingDaysColor,
     );
 
     if (values.isSelected) {
@@ -280,9 +205,6 @@ class DaysWidget extends StatelessWidget {
             (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
           color:
               selectedBackgroundColor ?? Theme.of(context).colorScheme.primary,
-          fontWeight: values.isFirstDayOfWeek || values.isLastDayOfWeek
-              ? FontWeight.bold
-              : null,
         );
       }
     } else if (values.day.isSameDay(values.minDate)) {
@@ -290,20 +212,21 @@ class DaysWidget extends StatelessWidget {
         values.day.isAfter(values.maxDate)) {
       txtStyle = (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
         color: dayDisableColor ??
-            Theme.of(context).colorScheme.onSurface.withOpacity(.5),
-        decoration: TextDecoration.lineThrough,
-        fontWeight: values.isFirstDayOfWeek || values.isLastDayOfWeek
-            ? FontWeight.bold
-            : null,
+            ((values.isFirstDayOfWeek || values.isLastDayOfWeek)
+                ? weekendDaysColor.withOpacity(.5)
+                : Theme.of(context).colorScheme.onSurface.withOpacity(.5)),
       );
     }
 
-    return Container(
+    return AnimatedContainer(
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: bgColor,
+        color: values.day.isSameDay(DateTime.now()) && !values.isSelected
+            ? currentDayColor
+            : bgColor,
         borderRadius: borderRadius,
       ),
+      duration: const Duration(milliseconds: 300),
       child: Text(
         values.text,
         textAlign: TextAlign.center,

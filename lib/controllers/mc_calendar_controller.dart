@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:scrollable_clean_calendar/utils/extensions.dart';
+import 'package:mc_scrollable_calendar/utils/extensions.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-class CleanCalendarController extends ChangeNotifier {
+class MCCalendarController extends ChangeNotifier {
   /// Obrigatory: The mininimum date to show
   final DateTime minDate;
 
   /// Obrigatory: The maximum date to show
   final DateTime maxDate;
-
-  /// If the range is enabled
-  final bool rangeMode;
 
   /// If the calendar is readOnly
   final bool readOnly;
@@ -46,10 +43,9 @@ class CleanCalendarController extends ChangeNotifier {
   /// The item scroll controller
   final ItemScrollController itemScrollController = ItemScrollController();
 
-  CleanCalendarController({
+  MCCalendarController({
     required this.minDate,
     required this.maxDate,
-    this.rangeMode = true,
     this.readOnly = false,
     this.endDateSelected,
     this.initialDateSelected,
@@ -95,7 +91,10 @@ class CleanCalendarController extends ChangeNotifier {
     while (today.weekday != weekdayStart) {
       today = today.subtract(const Duration(days: 1));
     }
-    final dateFormat = DateFormat(DateFormat.ABBR_WEEKDAY, locale);
+    final dateFormat = DateFormat.E(
+      locale,
+    );
+
     final daysOfWeek = [
       dateFormat.format(today),
       dateFormat.format(today.add(const Duration(days: 1))),
@@ -110,20 +109,8 @@ class CleanCalendarController extends ChangeNotifier {
   }
 
   void onDayClick(DateTime date, {bool update = true}) {
-    if (rangeMode) {
-      if (rangeMinDate == null || rangeMaxDate != null) {
-        rangeMinDate = date;
-        rangeMaxDate = null;
-      } else if (date.isBefore(rangeMinDate!)) {
-        rangeMaxDate = rangeMinDate;
-        rangeMinDate = date;
-      } else if (date.isAfter(rangeMinDate!) || date.isSameDay(rangeMinDate!)) {
-        rangeMaxDate = date;
-      }
-    } else {
-      rangeMinDate = date;
-      rangeMaxDate = date;
-    }
+    rangeMinDate = date;
+    rangeMaxDate = date;
 
     if (update) {
       notifyListeners();

@@ -1,7 +1,6 @@
-name: scrollable_clean_calendar
-description: A clean calendar widget with vertical scroll, locale, and range selection date
+name: mc_scrollable_calendar
 version: 1.5.0
-homepage: https://github.com/FabioFiuza/scrollable_clean_calendar
+publish_to: "none"
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
@@ -14,6 +13,10 @@ dependencies:
     sdk: flutter
   intl: any
   scrollable_positioned_list: ^0.3.8
+  # sliding_sheet2:
+  #   path: custom_libs/sliding_sheet2
+  # sliding_sheet2:
+  #   git: https://github.com/gidrokolbaska/sliding_sheet2.git
 
 dev_dependencies:
   flutter_test:
