@@ -14,16 +14,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  DateTime? selectedDate;
   late final MCCalendarController calendarController;
   @override
   void initState() {
     calendarController = MCCalendarController(
       minDate: DateTime.now(),
       maxDate: DateTime.now().add(const Duration(days: 90)),
-      onDayTapped: (date) {
-        selectedDate = date;
-      },
+
       // readOnly: true,
       weekdayStart: DateTime.monday,
       initialFocusDate: DateTime.now(),
@@ -38,17 +35,10 @@ class _MyAppState extends State<MyApp> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Scrollable Clean Calendar'),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       calendarController.clearSelectedDates();
-        //     },
-        //     icon: const Icon(Icons.clear),
-        //   )
-        // ],
       ),
       body: TestButton(
-          calendarController: calendarController, selectedDate: selectedDate),
+        calendarController: calendarController,
+      ),
     );
   }
 }
@@ -57,11 +47,9 @@ class TestButton extends StatelessWidget {
   const TestButton({
     Key? key,
     required this.calendarController,
-    required this.selectedDate,
   }) : super(key: key);
 
   final MCCalendarController calendarController;
-  final DateTime? selectedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +62,7 @@ class TestButton extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () async {
+            bool isLoading = false;
             await MCScrollableCalendar.showMCCleanCalendar(
               context,
               horizontalPadding: 11.5,
@@ -86,17 +75,37 @@ class TestButton extends StatelessWidget {
                   color: index <= 4 ? workingDaysColor : weekendDaysColor,
                 );
               },
-              bottomWidget: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Выбрать дату')),
+              bottomWidget: StatefulBuilder(builder: (context, setState) {
+                return ElevatedButton.icon(
+                  icon: isLoading
+                      ? CircularProgressIndicator()
+                      : const SizedBox.shrink(),
+                  label: Text('Выбрать дату'),
+                  onPressed: isLoading == true
+                      ? null
+                      : () async {
+                          setState(
+                            () {
+                              isLoading = true;
+                            },
+                          );
+                          await Future.delayed(const Duration(seconds: 3));
+                          setState(
+                            () {
+                              isLoading = false;
+                            },
+                          );
+                          print(calendarController.rangeMinDate);
+                          Navigator.of(context).pop();
+                        },
+                );
+              }),
             );
-            if (selectedDate == null) {
-              print('initial date: ${calendarController.initialDateSelected}');
-            } else {
-              print('hello:$selectedDate');
-            }
+            // if (selectedDate == null) {
+            //   print('initial date: ${calendarController.initialDateSelected}');
+            // } else {
+            //   print('hello:$selectedDate');
+            // }
           },
           child: Text('Открыть календарь'),
         ),
