@@ -63,7 +63,7 @@ class TestButton extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             bool isLoading = false;
-            await MCScrollableCalendar.showMCCleanCalendar(
+            await showMCCleanCalendar(
               context,
               horizontalPadding: 11.5,
               calendarController: calendarController,
@@ -77,11 +77,11 @@ class TestButton extends StatelessWidget {
               },
               bottomWidget: StatefulBuilder(
                 builder: (context, setState) {
-                  return Container(
-                    height: 64,
-                    color: Colors.red,
-                    width: 450,
-                  );
+                  return ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('test'));
                 },
               ),
             );

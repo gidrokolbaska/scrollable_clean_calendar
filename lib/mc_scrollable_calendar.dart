@@ -13,6 +13,120 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'sliding_sheet/src/sheet.dart';
 import 'sliding_sheet/src/specs.dart';
 
+Future<T?> showMCCleanCalendar<T>(
+  BuildContext context, {
+  required MCCalendarController calendarController,
+  double? horizontalPadding,
+  double spaceBetweenCalendars = 10,
+  double spaceBetweenMonthAndCalendar = 5,
+  Color workingDaysColor = Colors.black,
+  Color weekendDaysColor = Colors.purple,
+  Color currentDayColor = const Color(0xffDFE1E7),
+  Color daySelectedBackgroundColor = const Color(0xff32E17D),
+  Color monthContainerBackgroundColor = const Color(0xffEEF0F3),
+  TextStyle monthTextStyle = const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w800,
+  ),
+  TextStyle dayTextStyle = const TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+  ),
+  required TextStyle Function(
+          Color workingDaysColor, Color weekendDaysColor, int index)
+      headerStyle,
+  double topCornerRadius = 16,
+  List<double> snappings = const [0.7, 1.0],
+  required Widget bottomWidget,
+}) {
+  return showSlidingBottomSheet(
+    context,
+    useRootNavigator: true,
+    builder: (context) {
+      return SlidingSheetDialog(
+        elevation: 0,
+        cornerRadius: topCornerRadius,
+        isDismissable: false,
+        avoidStatusBar: true,
+        duration: const Duration(milliseconds: 300),
+        color: Colors.transparent,
+        backdropColor: Colors.black38,
+        headerBuilder: (context, state) {
+          return Material(
+            child: GridView.count(
+              crossAxisCount: DateTime.daysPerWeek,
+              shrinkWrap: true,
+              childAspectRatio: 1.2,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal:
+                    horizontalPadding != null ? (horizontalPadding + 6) : 6,
+              ),
+              children: List.generate(DateTime.daysPerWeek, (index) {
+                final weekDay = calendarController.getDaysOfWeek('ru')[index];
+
+                return Center(
+                  child: Text(
+                    index == 6 ? 'Вск' : weekDay.capitalize(),
+                    style: headerStyle.call(
+                      workingDaysColor,
+                      weekendDaysColor,
+                      index,
+                    ),
+                  ),
+                );
+              }),
+            ),
+          );
+        },
+        snapSpec: SnapSpec(
+          snap: true,
+          snappings: snappings,
+          positioning: SnapPositioning.relativeToAvailableSpace,
+        ),
+        customBuilder: (context, controller, state) {
+          return Material(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              fit: StackFit.expand,
+              children: [
+                MCScrollableCalendar(
+                  locale: 'ru',
+                  showWeekdays: true,
+                  scrollController: controller,
+                  calendarController: calendarController,
+                  calendarCrossAxisSpacing: 0,
+                  spaceBetweenCalendars: spaceBetweenCalendars,
+                  spaceBetweenMonthAndCalendar: spaceBetweenMonthAndCalendar,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding ?? 0,
+                    vertical: 16.0,
+                  ),
+                  workingDaysColor: workingDaysColor,
+                  weekendDaysColor: weekendDaysColor,
+                  monthContainerBackgroundColor: monthContainerBackgroundColor,
+                  monthTextStyle: monthTextStyle,
+                  dayTextStyle: dayTextStyle,
+                  currentDayColor: currentDayColor,
+                  daySelectedBackgroundColor: daySelectedBackgroundColor,
+                ),
+                Positioned(
+                  bottom: 32,
+                  width: MediaQuery.sizeOf(context).width,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: bottomWidget,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 class MCScrollableCalendar extends StatefulWidget {
   /// The language locale
   final String locale;
@@ -117,121 +231,6 @@ class MCScrollableCalendar extends StatefulWidget {
     this.dayRadius = 6,
     required this.calendarController,
   });
-
-  static Future<void> showMCCleanCalendar(
-    BuildContext context, {
-    required MCCalendarController calendarController,
-    double? horizontalPadding,
-    double spaceBetweenCalendars = 10,
-    double spaceBetweenMonthAndCalendar = 5,
-    Color workingDaysColor = Colors.black,
-    Color weekendDaysColor = Colors.purple,
-    Color currentDayColor = const Color(0xffDFE1E7),
-    Color daySelectedBackgroundColor = const Color(0xff32E17D),
-    Color monthContainerBackgroundColor = const Color(0xffEEF0F3),
-    TextStyle monthTextStyle = const TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.w800,
-    ),
-    TextStyle dayTextStyle = const TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.w600,
-    ),
-    required TextStyle Function(
-            Color workingDaysColor, Color weekendDaysColor, int index)
-        headerStyle,
-    double topCornerRadius = 16,
-    List<double> snappings = const [0.7, 1.0],
-    required Widget bottomWidget,
-  }) {
-    return showSlidingBottomSheet(
-      context,
-      useRootNavigator: true,
-      builder: (context) {
-        return SlidingSheetDialog(
-          elevation: 0,
-          cornerRadius: topCornerRadius,
-          isDismissable: false,
-          avoidStatusBar: true,
-          duration: const Duration(milliseconds: 300),
-          color: Colors.transparent,
-          backdropColor: Colors.black38,
-          headerBuilder: (context, state) {
-            return Material(
-              child: GridView.count(
-                crossAxisCount: DateTime.daysPerWeek,
-                shrinkWrap: true,
-                childAspectRatio: 1.2,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(
-                  horizontal:
-                      horizontalPadding != null ? (horizontalPadding + 6) : 6,
-                ),
-                children: List.generate(DateTime.daysPerWeek, (index) {
-                  final weekDay = calendarController.getDaysOfWeek('ru')[index];
-
-                  return Center(
-                    child: Text(
-                      index == 6 ? 'Вск' : weekDay.capitalize(),
-                      style: headerStyle.call(
-                        workingDaysColor,
-                        weekendDaysColor,
-                        index,
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            );
-          },
-          snapSpec: SnapSpec(
-            snap: true,
-            snappings: snappings,
-            positioning: SnapPositioning.relativeToAvailableSpace,
-          ),
-          customBuilder: (context, controller, state) {
-            return Material(
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                fit: StackFit.expand,
-                children: [
-                  MCScrollableCalendar(
-                    locale: 'ru',
-                    showWeekdays: true,
-                    scrollController: controller,
-                    calendarController: calendarController,
-                    calendarCrossAxisSpacing: 0,
-                    spaceBetweenCalendars: spaceBetweenCalendars,
-                    spaceBetweenMonthAndCalendar: spaceBetweenMonthAndCalendar,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: horizontalPadding ?? 0,
-                      vertical: 16.0,
-                    ),
-                    workingDaysColor: workingDaysColor,
-                    weekendDaysColor: weekendDaysColor,
-                    monthContainerBackgroundColor:
-                        monthContainerBackgroundColor,
-                    monthTextStyle: monthTextStyle,
-                    dayTextStyle: dayTextStyle,
-                    currentDayColor: currentDayColor,
-                    daySelectedBackgroundColor: daySelectedBackgroundColor,
-                  ),
-                  Positioned(
-                    bottom: 32,
-                    width: MediaQuery.sizeOf(context).width,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: bottomWidget,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   @override
   State<MCScrollableCalendar> createState() => _MCScrollableCalendarState();
