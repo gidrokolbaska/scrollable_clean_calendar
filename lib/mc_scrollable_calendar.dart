@@ -38,8 +38,8 @@ Future<T?> showMCCleanCalendar<T>(
   double topCornerRadius = 16,
   List<double> snappings = const [0.7, 1.0],
   required Widget bottomWidget,
-}) {
-  return showSlidingBottomSheet(
+}) async {
+  return await showSlidingBottomSheet(
     context,
     useRootNavigator: true,
     builder: (context) {

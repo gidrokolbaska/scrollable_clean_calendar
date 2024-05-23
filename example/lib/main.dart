@@ -75,14 +75,11 @@ class TestButton extends StatelessWidget {
                   color: index <= 4 ? workingDaysColor : weekendDaysColor,
                 );
               },
-              bottomWidget: StatefulBuilder(
-                builder: (context, setState) {
-                  return ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('test'));
+              bottomWidget: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
+                child: Text('test'),
               ),
             );
             // if (selectedDate == null) {
