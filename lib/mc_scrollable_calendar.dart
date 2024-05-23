@@ -164,16 +164,21 @@ class MCScrollableCalendar extends StatefulWidget {
                 childAspectRatio: 1.2,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding != null
-                        ? (horizontalPadding + 6)
-                        : 6),
+                  horizontal:
+                      horizontalPadding != null ? (horizontalPadding + 6) : 6,
+                ),
                 children: List.generate(DateTime.daysPerWeek, (index) {
                   final weekDay = calendarController.getDaysOfWeek('ru')[index];
 
                   return Center(
-                    child: Text(index == 6 ? 'Вск' : weekDay.capitalize(),
-                        style: headerStyle.call(
-                            workingDaysColor, weekendDaysColor, index)),
+                    child: Text(
+                      index == 6 ? 'Вск' : weekDay.capitalize(),
+                      style: headerStyle.call(
+                        workingDaysColor,
+                        weekendDaysColor,
+                        index,
+                      ),
+                    ),
                   );
                 }),
               ),
@@ -188,6 +193,7 @@ class MCScrollableCalendar extends StatefulWidget {
             return Material(
               child: Stack(
                 alignment: Alignment.bottomCenter,
+                fit: StackFit.expand,
                 children: [
                   MCScrollableCalendar(
                     locale: 'ru',
@@ -211,15 +217,11 @@ class MCScrollableCalendar extends StatefulWidget {
                     daySelectedBackgroundColor: daySelectedBackgroundColor,
                   ),
                   Positioned(
-                    bottom: 0,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        bottomWidget,
-                        const SizedBox(
-                          height: 32,
-                        )
-                      ],
+                    bottom: 32,
+                    width: MediaQuery.sizeOf(context).width,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: bottomWidget,
                     ),
                   ),
                 ],

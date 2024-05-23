@@ -75,31 +75,15 @@ class TestButton extends StatelessWidget {
                   color: index <= 4 ? workingDaysColor : weekendDaysColor,
                 );
               },
-              bottomWidget: StatefulBuilder(builder: (context, setState) {
-                return ElevatedButton.icon(
-                  icon: isLoading
-                      ? CircularProgressIndicator()
-                      : const SizedBox.shrink(),
-                  label: Text('Выбрать дату'),
-                  onPressed: isLoading == true
-                      ? null
-                      : () async {
-                          setState(
-                            () {
-                              isLoading = true;
-                            },
-                          );
-                          await Future.delayed(const Duration(seconds: 3));
-                          setState(
-                            () {
-                              isLoading = false;
-                            },
-                          );
-                          print(calendarController.rangeMinDate);
-                          Navigator.of(context).pop();
-                        },
-                );
-              }),
+              bottomWidget: StatefulBuilder(
+                builder: (context, setState) {
+                  return Container(
+                    height: 64,
+                    color: Colors.red,
+                    width: 450,
+                  );
+                },
+              ),
             );
             // if (selectedDate == null) {
             //   print('initial date: ${calendarController.initialDateSelected}');
