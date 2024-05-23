@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mc_scrollable_calendar/controllers/mc_calendar_controller.dart';
 import 'package:mc_scrollable_calendar/mc_scrollable_calendar.dart';
+import 'package:mc_scrollable_calendar/sliding_sheet/src/sheet.dart';
 
 void main() {
   initializeDateFormatting();
@@ -63,7 +64,7 @@ class TestButton extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             bool isLoading = false;
-            await showMCCleanCalendar(
+            await showMCCalendar(
               context,
               horizontalPadding: 11.5,
               calendarController: calendarController,

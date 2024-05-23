@@ -11,16 +11,38 @@ part of 'sheet.dart';
 ///
 /// The `resizeToAvoidBottomInset` parameter can be used to avoid the keyboard from obscuring
 /// the content bottom sheet.
-Future<T?> showSlidingBottomSheet<T>(
+Future<T?> showMCCalendar<T>(
   BuildContext context, {
-  required SlidingSheetDialog Function(BuildContext context) builder,
   Widget Function(BuildContext context, SlidingSheet sheet)? parentBuilder,
   RouteSettings? routeSettings,
   bool useRootNavigator = false,
   bool resizeToAvoidBottomInset = true,
+  required MCCalendarController calendarController,
+  double? horizontalPadding,
+  double spaceBetweenCalendars = 10,
+  double spaceBetweenMonthAndCalendar = 5,
+  Color workingDaysColor = Colors.black,
+  Color weekendDaysColor = Colors.purple,
+  Color currentDayColor = const Color(0xffDFE1E7),
+  Color daySelectedBackgroundColor = const Color(0xff32E17D),
+  Color monthContainerBackgroundColor = const Color(0xffEEF0F3),
+  TextStyle monthTextStyle = const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w800,
+  ),
+  TextStyle dayTextStyle = const TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+  ),
+  required TextStyle Function(
+          Color workingDaysColor, Color weekendDaysColor, int index)
+      headerStyle,
+  double topCornerRadius = 16,
+  List<double> snappings = const [0.7, 1.0],
+  required Widget bottomWidget,
 }) {
-  SlidingSheetDialog dialog = builder(context);
-  final SheetController controller = dialog.controller ?? SheetController();
+  SlidingSheetDialog dialog = const SlidingSheetDialog();
+  final SheetController controller = SheetController();
 
   final theme = Theme.of(context);
   final ValueNotifier<int> rebuilder = ValueNotifier(0);
@@ -36,7 +58,90 @@ Future<T?> showSlidingBottomSheet<T>(
         return ValueListenableBuilder(
           valueListenable: rebuilder,
           builder: (context, dynamic value, _) {
-            dialog = builder(context);
+            dialog = SlidingSheetDialog(
+              elevation: 0,
+              cornerRadius: topCornerRadius,
+              isDismissable: false,
+              avoidStatusBar: true,
+              duration: const Duration(milliseconds: 300),
+              color: Colors.transparent,
+              backdropColor: Colors.black38,
+              headerBuilder: (context, state) {
+                return Material(
+                  child: GridView.count(
+                    crossAxisCount: DateTime.daysPerWeek,
+                    shrinkWrap: true,
+                    childAspectRatio: 1.2,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding != null
+                          ? (horizontalPadding + 6)
+                          : 6,
+                    ),
+                    children: List.generate(DateTime.daysPerWeek, (index) {
+                      final weekDay =
+                          calendarController.getDaysOfWeek('ru')[index];
+
+                      return Center(
+                        child: Text(
+                          index == 6 ? 'Вск' : weekDay.capitalize(),
+                          style: headerStyle.call(
+                            workingDaysColor,
+                            weekendDaysColor,
+                            index,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                );
+              },
+              snapSpec: SnapSpec(
+                snap: true,
+                snappings: snappings,
+                positioning: SnapPositioning.relativeToAvailableSpace,
+              ),
+              customBuilder: (context, controller, state) {
+                return Material(
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    fit: StackFit.expand,
+                    children: [
+                      MCScrollableCalendar(
+                        locale: 'ru',
+                        showWeekdays: true,
+                        scrollController: controller,
+                        calendarController: calendarController,
+                        calendarCrossAxisSpacing: 0,
+                        spaceBetweenCalendars: spaceBetweenCalendars,
+                        spaceBetweenMonthAndCalendar:
+                            spaceBetweenMonthAndCalendar,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: horizontalPadding ?? 0,
+                          vertical: 16.0,
+                        ),
+                        workingDaysColor: workingDaysColor,
+                        weekendDaysColor: weekendDaysColor,
+                        monthContainerBackgroundColor:
+                            monthContainerBackgroundColor,
+                        monthTextStyle: monthTextStyle,
+                        dayTextStyle: dayTextStyle,
+                        currentDayColor: currentDayColor,
+                        daySelectedBackgroundColor: daySelectedBackgroundColor,
+                      ),
+                      Positioned(
+                        bottom: 32,
+                        width: MediaQuery.sizeOf(context).width,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: bottomWidget,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
 
             // Assign the rebuild function in order to
             // be able to change the dialogs parameters
