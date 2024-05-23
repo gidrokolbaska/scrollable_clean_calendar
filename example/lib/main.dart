@@ -78,7 +78,7 @@ class TestButton extends StatelessWidget {
               },
               bottomWidget: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context, rootNavigator: true).pop();
                 },
                 child: Text('test'),
               ),

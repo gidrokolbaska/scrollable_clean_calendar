@@ -46,11 +46,9 @@ Future<T?> showMCCalendar<T>(
 
   final theme = Theme.of(context);
   final ValueNotifier<int> rebuilder = ValueNotifier(0);
-
-  return Navigator.of(
-    context,
-    rootNavigator: useRootNavigator,
-  ).push(
+  final NavigatorState navigator =
+      Navigator.of(context, rootNavigator: useRootNavigator);
+  return navigator.push(
     _SlidingSheetRoute(
       duration: dialog.duration,
       settings: routeSettings,
@@ -116,9 +114,15 @@ Future<T?> showMCCalendar<T>(
                         spaceBetweenCalendars: spaceBetweenCalendars,
                         spaceBetweenMonthAndCalendar:
                             spaceBetweenMonthAndCalendar,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPadding ?? 0,
-                          vertical: 16.0,
+                        padding: EdgeInsets.only(
+                          left: horizontalPadding != null
+                              ? horizontalPadding / 2
+                              : 0,
+                          right: horizontalPadding != null
+                              ? horizontalPadding / 2
+                              : 0,
+                          top: 6,
+                          bottom: 32 * 2 + 60 / 2 + 6,
                         ),
                         workingDaysColor: workingDaysColor,
                         weekendDaysColor: weekendDaysColor,
