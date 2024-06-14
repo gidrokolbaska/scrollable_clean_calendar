@@ -17,6 +17,7 @@ Future<T?> showMCCalendar<T>(
   RouteSettings? routeSettings,
   bool useRootNavigator = false,
   bool resizeToAvoidBottomInset = true,
+  bool isDismissible = false,
   required MCCalendarController calendarController,
   double? horizontalPadding,
   double spaceBetweenCalendars = 10,
@@ -59,7 +60,7 @@ Future<T?> showMCCalendar<T>(
             dialog = SlidingSheetDialog(
               elevation: 0,
               cornerRadius: topCornerRadius,
-              isDismissable: false,
+              isDismissable: isDismissible,
               avoidStatusBar: true,
               duration: const Duration(milliseconds: 300),
               color: Colors.transparent,
