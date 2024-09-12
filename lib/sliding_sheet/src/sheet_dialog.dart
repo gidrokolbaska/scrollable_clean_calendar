@@ -27,6 +27,7 @@ Future<T?> showMCCalendar<T>(
   Color currentDayColor = const Color(0xffDFE1E7),
   Color daySelectedBackgroundColor = const Color(0xff32E17D),
   Color monthContainerBackgroundColor = const Color(0xffEEF0F3),
+  Color? overridenWeekendDaysColor,
   TextStyle monthTextStyle = const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w800,
@@ -129,6 +130,7 @@ Future<T?> showMCCalendar<T>(
                         weekendDaysColor: weekendDaysColor,
                         monthContainerBackgroundColor:
                             monthContainerBackgroundColor,
+                        overridenWeekendDaysColor: overridenWeekendDaysColor,
                         monthTextStyle: monthTextStyle,
                         dayTextStyle: dayTextStyle,
                         currentDayColor: currentDayColor,

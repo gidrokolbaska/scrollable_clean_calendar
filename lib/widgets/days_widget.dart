@@ -248,7 +248,8 @@ class _Beauty extends StatelessWidget {
       txtStyle = (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
         color: dayDisableColor ??
             ((values.isFirstDayOfWeek || values.isLastDayOfWeek)
-                ? weekendDaysColor.withOpacity(.5)
+                ? overridenWeekendDaysColor?.withOpacity(.5) ??
+                    weekendDaysColor.withOpacity(.5)
                 : Theme.of(context).colorScheme.onSurface.withOpacity(.5)),
       );
     }
