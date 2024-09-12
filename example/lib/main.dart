@@ -70,6 +70,7 @@ class TestButton extends StatelessWidget {
               isDismissible: true,
               calendarController: calendarController,
               weekendDaysColor: Colors.blue,
+              backgroundColor: Colors.blue,
               overridenWeekendDaysColor: Colors.purple,
               headerStyle:
                   (Color workingDaysColor, Color weekendDaysColor, int index) {

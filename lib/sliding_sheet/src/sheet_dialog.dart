@@ -69,6 +69,7 @@ Future<T?> showMCCalendar<T>(
               backdropColor: Colors.black38,
               headerBuilder: (context, state) {
                 return Material(
+                  color: backgroundColor,
                   child: GridView.count(
                     crossAxisCount: DateTime.daysPerWeek,
                     shrinkWrap: true,
@@ -108,34 +109,38 @@ Future<T?> showMCCalendar<T>(
                     alignment: Alignment.bottomCenter,
                     fit: StackFit.expand,
                     children: [
-                      MCScrollableCalendar(
-                        locale: 'ru',
-                        showWeekdays: true,
-                        scrollController: controller,
-                        calendarController: calendarController,
-                        calendarCrossAxisSpacing: 0,
-                        spaceBetweenCalendars: spaceBetweenCalendars,
-                        spaceBetweenMonthAndCalendar:
-                            spaceBetweenMonthAndCalendar,
-                        padding: EdgeInsets.only(
-                          left: horizontalPadding != null
-                              ? horizontalPadding / 2
-                              : 0,
-                          right: horizontalPadding != null
-                              ? horizontalPadding / 2
-                              : 0,
-                          top: 6,
-                          bottom: 32 * 2 + 60 / 2 + 6,
+                      ColoredBox(
+                        color: backgroundColor ?? theme.scaffoldBackgroundColor,
+                        child: MCScrollableCalendar(
+                          locale: 'ru',
+                          showWeekdays: true,
+                          scrollController: controller,
+                          calendarController: calendarController,
+                          calendarCrossAxisSpacing: 0,
+                          spaceBetweenCalendars: spaceBetweenCalendars,
+                          spaceBetweenMonthAndCalendar:
+                              spaceBetweenMonthAndCalendar,
+                          padding: EdgeInsets.only(
+                            left: horizontalPadding != null
+                                ? horizontalPadding / 2
+                                : 0,
+                            right: horizontalPadding != null
+                                ? horizontalPadding / 2
+                                : 0,
+                            top: 6,
+                            bottom: 32 * 2 + 60 / 2 + 6,
+                          ),
+                          workingDaysColor: workingDaysColor,
+                          weekendDaysColor: weekendDaysColor,
+                          monthContainerBackgroundColor:
+                              monthContainerBackgroundColor,
+                          overridenWeekendDaysColor: overridenWeekendDaysColor,
+                          monthTextStyle: monthTextStyle,
+                          dayTextStyle: dayTextStyle,
+                          currentDayColor: currentDayColor,
+                          daySelectedBackgroundColor:
+                              daySelectedBackgroundColor,
                         ),
-                        workingDaysColor: workingDaysColor,
-                        weekendDaysColor: weekendDaysColor,
-                        monthContainerBackgroundColor:
-                            monthContainerBackgroundColor,
-                        overridenWeekendDaysColor: overridenWeekendDaysColor,
-                        monthTextStyle: monthTextStyle,
-                        dayTextStyle: dayTextStyle,
-                        currentDayColor: currentDayColor,
-                        daySelectedBackgroundColor: daySelectedBackgroundColor,
                       ),
                       Positioned(
                         bottom: 32,
@@ -175,8 +180,7 @@ Future<T?> showMCCalendar<T>(
               listener: dialog.listener,
               snapSpec: snapSpec,
               duration: dialog.duration,
-              color: backgroundColor ??
-                  dialog.color ??
+              color: dialog.color ??
                   theme.bottomSheetTheme.backgroundColor ??
                   theme.dialogTheme.backgroundColor ??
                   theme.dialogBackgroundColor,
