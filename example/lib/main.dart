@@ -67,7 +67,9 @@ class TestButton extends StatelessWidget {
             await showMCCalendar(
               context,
               horizontalPadding: 11.5,
+              isDismissible: true,
               calendarController: calendarController,
+              weekendDaysColor: Colors.blue,
               headerStyle:
                   (Color workingDaysColor, Color weekendDaysColor, int index) {
                 return TextStyle(

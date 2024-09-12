@@ -21,6 +21,7 @@ class DaysWidget extends StatelessWidget {
   final Color monthContainerBackgroundColor;
   final Color currentDayColor;
   final Color weekendDaysColor;
+  final Color? overridenWeekendDaysColor;
   final double radius;
   final TextStyle? textStyle;
   final double? aspectRatio;
@@ -43,6 +44,7 @@ class DaysWidget extends StatelessWidget {
     required this.currentDayColor,
     required this.textStyle,
     required this.aspectRatio,
+    required this.overridenWeekendDaysColor,
   }) : super(key: key);
 
   @override
@@ -112,11 +114,18 @@ class DaysWidget extends StatelessWidget {
         if (dayBuilder != null) {
           widget = dayBuilder!(context, dayValues);
         } else {
-          widget = _beauty(
-            context,
-            dayValues,
-            monthContainerBackgroundColor,
-            currentDayColor,
+          widget = _Beauty(
+            values: dayValues,
+            monthContainerBackgroundColor: monthContainerBackgroundColor,
+            currentDayColor: currentDayColor,
+            textStyle: textStyle,
+            radius: radius,
+            weekendDaysColor: weekendDaysColor,
+            workingDaysColor: workingDaysColor,
+            selectedBackgroundColor: selectedBackgroundColor,
+            selectedBackgroundColorBetween: selectedBackgroundColorBetween,
+            dayDisableColor: dayDisableColor,
+            overridenWeekendDaysColor: overridenWeekendDaysColor,
           );
         }
 
@@ -142,18 +151,44 @@ class DaysWidget extends StatelessWidget {
       }),
     );
   }
+}
 
-  Widget _beauty(BuildContext context, DayValues values,
-      Color monthContainerBackgroundColor, Color currentDayColor) {
+class _Beauty extends StatelessWidget {
+  final DayValues values;
+  final Color monthContainerBackgroundColor;
+  final Color currentDayColor;
+  final TextStyle? textStyle;
+  final double radius;
+  final Color weekendDaysColor;
+  final Color workingDaysColor;
+  final Color? selectedBackgroundColor;
+  final Color? selectedBackgroundColorBetween;
+  final Color? dayDisableColor;
+  final Color? overridenWeekendDaysColor;
+
+  const _Beauty({
+    required this.values,
+    required this.monthContainerBackgroundColor,
+    required this.currentDayColor,
+    required this.textStyle,
+    required this.radius,
+    required this.weekendDaysColor,
+    required this.workingDaysColor,
+    this.selectedBackgroundColor,
+    this.selectedBackgroundColorBetween,
+    this.dayDisableColor,
+    required this.overridenWeekendDaysColor,
+  });
+  @override
+  Widget build(BuildContext context) {
     BorderRadiusGeometry? borderRadius = BorderRadius.circular(radius);
     Color bgColor = monthContainerBackgroundColor;
     TextStyle txtStyle =
         (textStyle ?? Theme.of(context).textTheme.bodyLarge)!.copyWith(
       color: values.isFirstDayOfWeek || values.isLastDayOfWeek
-          ? weekendDaysColor
+          ? overridenWeekendDaysColor ?? weekendDaysColor
           : workingDaysColor,
     );
-
     if (values.isSelected) {
       if (values.isFirstDayOfWeek) {
         borderRadius = BorderRadius.only(

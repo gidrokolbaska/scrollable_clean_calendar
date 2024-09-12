@@ -193,6 +193,9 @@ class MCScrollableCalendar extends StatefulWidget {
   final Color monthContainerBackgroundColor;
   final Color currentDayColor;
 
+  ///The color of the weekend day in the calendar if [weekendDaysColor] is null
+  final Color? overridenWeekendDaysColor;
+
   /// A builder to make a customized day of calendar
   final Widget Function(BuildContext context, DayValues values)? dayBuilder;
 
@@ -226,6 +229,7 @@ class MCScrollableCalendar extends StatefulWidget {
     this.dayAspectRatio,
     this.dayRadius = 6,
     required this.calendarController,
+    this.overridenWeekendDaysColor,
   });
 
   @override
@@ -359,6 +363,7 @@ class _MCScrollableCalendarState extends State<MCScrollableCalendar> {
                 radius: widget.dayRadius,
                 textStyle: widget.dayTextStyle,
                 aspectRatio: widget.dayAspectRatio,
+                overridenWeekendDaysColor: widget.overridenWeekendDaysColor,
               );
             },
           )
