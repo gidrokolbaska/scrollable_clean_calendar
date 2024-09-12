@@ -22,6 +22,7 @@ Future<T?> showMCCalendar<T>(
   double? horizontalPadding,
   double spaceBetweenCalendars = 10,
   double spaceBetweenMonthAndCalendar = 5,
+  Color? backgroundColor,
   Color workingDaysColor = Colors.black,
   Color weekendDaysColor = Colors.purple,
   Color currentDayColor = const Color(0xffDFE1E7),
@@ -174,7 +175,8 @@ Future<T?> showMCCalendar<T>(
               listener: dialog.listener,
               snapSpec: snapSpec,
               duration: dialog.duration,
-              color: dialog.color ??
+              color: backgroundColor ??
+                  dialog.color ??
                   theme.bottomSheetTheme.backgroundColor ??
                   theme.dialogTheme.backgroundColor ??
                   theme.dialogBackgroundColor,
