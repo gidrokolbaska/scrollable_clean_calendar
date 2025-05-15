@@ -104,62 +104,54 @@ Future<T?> showMCCalendar<T>(
                 positioning: SnapPositioning.relativeToAvailableSpace,
               ),
               customBuilder: (context, controller, state) {
-                return SafeArea(
-                  top: false,
-                  minimum: const EdgeInsets.only(
-                    bottom: 16.0,
-                  ),
-                  child: Material(
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      fit: StackFit.expand,
-                      children: [
-                        ColoredBox(
-                          color:
-                              backgroundColor ?? theme.scaffoldBackgroundColor,
-                          child: MCScrollableCalendar(
-                            locale: 'ru',
-                            showWeekdays: true,
-                            scrollController: controller,
-                            calendarController: calendarController,
-                            calendarCrossAxisSpacing: 0,
-                            spaceBetweenCalendars: spaceBetweenCalendars,
-                            spaceBetweenMonthAndCalendar:
-                                spaceBetweenMonthAndCalendar,
-                            padding: EdgeInsets.only(
-                              left: horizontalPadding != null
-                                  ? horizontalPadding / 2
-                                  : 0,
-                              right: horizontalPadding != null
-                                  ? horizontalPadding / 2
-                                  : 0,
-                              top: 6,
-                              bottom: 32 * 2 + 60 / 2 + 6,
-                            ),
-                            workingDaysColor: workingDaysColor,
-                            weekendDaysColor: weekendDaysColor,
-                            monthContainerBackgroundColor:
-                                monthContainerBackgroundColor,
-                            overridenWeekendDaysColor:
-                                overridenWeekendDaysColor,
-                            monthTextStyle: monthTextStyle,
-                            dayTextStyle: dayTextStyle,
-                            currentDayColor: currentDayColor,
-                            daySelectedBackgroundColor:
-                                daySelectedBackgroundColor,
+                return Material(
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    fit: StackFit.expand,
+                    children: [
+                      ColoredBox(
+                        color: backgroundColor ?? theme.scaffoldBackgroundColor,
+                        child: MCScrollableCalendar(
+                          locale: 'ru',
+                          showWeekdays: true,
+                          scrollController: controller,
+                          calendarController: calendarController,
+                          calendarCrossAxisSpacing: 0,
+                          spaceBetweenCalendars: spaceBetweenCalendars,
+                          spaceBetweenMonthAndCalendar:
+                              spaceBetweenMonthAndCalendar,
+                          padding: EdgeInsets.only(
+                            left: horizontalPadding != null
+                                ? horizontalPadding / 2
+                                : 0,
+                            right: horizontalPadding != null
+                                ? horizontalPadding / 2
+                                : 0,
+                            top: 6,
+                            bottom: 32 * 2 + 60 / 2 + 6,
                           ),
+                          workingDaysColor: workingDaysColor,
+                          weekendDaysColor: weekendDaysColor,
+                          monthContainerBackgroundColor:
+                              monthContainerBackgroundColor,
+                          overridenWeekendDaysColor: overridenWeekendDaysColor,
+                          monthTextStyle: monthTextStyle,
+                          dayTextStyle: dayTextStyle,
+                          currentDayColor: currentDayColor,
+                          daySelectedBackgroundColor:
+                              daySelectedBackgroundColor,
                         ),
-                        Positioned(
-                          bottom: 0,
-                          width: MediaQuery.sizeOf(context).width,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: bottomWidget,
-                          ),
+                      ),
+                      Positioned(
+                        bottom: math.max(
+                            MediaQuery.viewPaddingOf(context).bottom, 16.0),
+                        width: MediaQuery.sizeOf(context).width,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: bottomWidget,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },
