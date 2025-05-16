@@ -144,7 +144,10 @@ Future<T?> showMCCalendar<T>(
                       ),
                       Positioned(
                         bottom: math.max(
-                            MediaQuery.viewPaddingOf(context).bottom, 16.0),
+                          MediaQuery.viewPaddingOf(context).bottom +
+                              (Platform.isIOS ? 0 : 16),
+                          16.0,
+                        ),
                         width: MediaQuery.sizeOf(context).width,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
